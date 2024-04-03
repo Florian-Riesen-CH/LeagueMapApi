@@ -20,9 +20,9 @@ app.add_middleware(
 )
 
 @app.get("/getDatas")
-def getDatas(sumonnerName:str, nbgame:int):
+def getDatas(sumonnerName:str, nbgame:int, tagename:str):
     try:
-        matchList: List[Match] = getMatchsInformation(sumonnerName, nbgame)
+        matchList: List[Match] = getMatchsInformation(sumonnerName, nbgame, tagename)
     except SummonerNameError as e:
         # Vous pouvez retourner un statut d'erreur HTTP spécifique avec un message
         raise HTTPException(status_code=404, detail=f"Erreur : {e}")
@@ -37,5 +37,5 @@ def getDatas(sumonnerName:str, nbgame:int):
 
 
 #vicorn main:app --reload
-getDatas('Take my LP',5)
+getDatas('Take my LP',5, 'LOST')
 #pip install requests && pip install fastapi && pip install uvicorn && export PATH=$PATH:/opt/render/.local/bin && uvicorn main:app --host 0.0.0.0 --port $PORT;

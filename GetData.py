@@ -18,8 +18,8 @@ def incrementApiIndex():
         API_INDEX = 0
     print(API_KEYS[API_INDEX])
 
-def findUuidBySummonerName(SummonerName: str):
-    url = f'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urllib.parse.quote(SummonerName)}?api_key={API_KEYS[API_INDEX]}'
+def findUuidBySummonerName(SummonerName: str, tagName:str):
+    url = f'https://europe.api.riotgames.com/riot/account/v1/accounts/by-riot-id/{urllib.parse.quote(SummonerName)}/{urllib.parse.quote(tagName)}?api_key={API_KEYS[API_INDEX]}'
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
@@ -76,14 +76,14 @@ def getMatchInfoByMatchId(puuid:str, matchId:int):
                 match.addMatchPlayerTeamOpponent(MatchPlayer(participant['puuid'],participant['riotIdGameName'],participant['championId'],participant['championName'], participant['teamId']))
     return match
 
-def getMatchsInformation(summonerName, nbMatch):
+def getMatchsInformation(summonerName, nbMatch, tagename):
     nbGetMatch = 0
     matchList: List[Match] = []
     i = 0
     while i < nbMatch:
         if i % API_JUMP == 0:
             incrementApiIndex()
-            myPuuid = findUuidBySummonerName(summonerName)
+            myPuuid = findUuidBySummonerName(summonerName, tagename)
             myLastMatch = getMatchHistoryByPuuid(myPuuid, i, API_JUMP)
         for index, match in enumerate(myLastMatch):
             if nbGetMatch == nbMatch:

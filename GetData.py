@@ -1,6 +1,7 @@
 import time
 import requests
 import json
+import urllib.parse
 
 from Object.Match import *
 from Object.exceptions import SummonerNameError
@@ -18,11 +19,11 @@ def incrementApiIndex():
     print(API_KEYS[API_INDEX])
 
 def findUuidBySummonerName(SummonerName: str):
-    url = f'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{SummonerName}?api_key={API_KEYS[API_INDEX]}'
-    
+    url = f'https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/{urllib.parse.quote(SummonerName)}?api_key={API_KEYS[API_INDEX]}'
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
+        print(SummonerName + ":  " +data['puuid'])
         return data['puuid']
     else:
         # Lever une SummonerNameError plutôt qu'une Exception générique
@@ -40,6 +41,8 @@ def getMatchInfoByMatchId(puuid:str, matchId:int):
     try:
         url = f'https://europe.api.riotgames.com/lol/match/v5/matches/{matchId}?api_key={API_KEYS[API_INDEX]}'
         response = requests.request("GET", url)
+        if response.status_code != 200:
+            return
         data = json.loads(response.text)
         gameMode = data['info']['gameMode']
     except Exception as e:
@@ -90,7 +93,7 @@ def getMatchsInformation(summonerName, nbMatch):
             if match != None:
                 matchList.append(match)
                 nbGetMatch += 1
-            i += 1 
+                i += 1 
     return matchList
         
 
